@@ -1,4 +1,4 @@
-/* ESP32 MotorScan - Desenvolvido por Daniel Costa*/
+/* ESP32 MotorScan - Developed by Daniel Costa*/
 
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
@@ -6,7 +6,9 @@
 #include "WiFi.h"
 #include "MPU9250.h"
 #include <esp_now.h>
+#include "Adafruit_LC709203F.h"
 
+Adafruit_LC709203F lc;
 #define SEALEVELPRESSURE_HPA (1013.25)
 
 //Credenciais para aceder ao AP do Gateway
@@ -99,6 +101,22 @@ void setup() {
     return;
   }
 
+if (!lc.begin()) {
+    Serial.println(F("Não foi encontrado o LC709203F!"));
+    while (1) delay(10);
+  }
+  Serial.println(F("Encontrado LC709203F"));
+  Serial.print("Versão: 0x"); 
+  Serial.println(lc.getICversion(), HEX);
+
+  lc.setThermistorB(3950);
+  Serial.print("Termistor B = "); 
+  Serial.println(lc.getThermistorB());
+
+  lc.setPackSize(LC709203F_APA_500MAH);
+
+  lc.setAlarmVoltage(3.8);
+
   // Uma vez o ESP-NOW inicidado com sucesso, existirá um registo para enviar um callback para obter o estado dos pacotes enviados
   esp_now_register_send_cb(OnDataSent);
 
@@ -160,6 +178,10 @@ void loop() {
   else {
     Serial.println("Erro ao enviar os dados");
   }
+
+  serial.print("Tensão da bateria: "); Serial.println(lc.cellVoltage(), 3);
+  Serial.print("Percentagem da bateria: "); Serial.println(lc.cellPercent(), 1);
+  Serial.print("Temperatura da bateria: "); Serial.println(lc.getCellTemperature(), 1);
   //Aguarda 10 segundos até o próximo envio
   delay(10000);
   }
