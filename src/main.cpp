@@ -179,7 +179,7 @@ void loop() {
     Serial.println("Erro ao enviar os dados");
   }
 
-  serial.print("Tensão da bateria: "); Serial.println(lc.cellVoltage(), 3);
+  Serial.print("Tensão da bateria: "); Serial.println(lc.cellVoltage(), 3);
   Serial.print("Percentagem da bateria: "); Serial.println(lc.cellPercent(), 1);
   Serial.print("Temperatura da bateria: "); Serial.println(lc.getCellTemperature(), 1);
   //Aguarda 10 segundos até o próximo envio
